@@ -1,4 +1,4 @@
-package com.onlinelearning;
+package com.java_pratice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

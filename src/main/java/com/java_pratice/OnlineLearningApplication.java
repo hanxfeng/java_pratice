@@ -1,4 +1,4 @@
-package com.onlinelearning;
+package com.java_pratice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
