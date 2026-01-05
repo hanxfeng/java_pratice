@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.onlinelearning</groupId>
-	<artifactId>online-learning</artifactId>
+	<artifactId>java_practice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>online-learning</name>
 	<description>Online Learning Platform</description>
