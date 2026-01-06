@@ -1,13 +1,13 @@
-package com.java_pratice;
+package com.example.java_practice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class OnlineLearningApplication {
+public class JavaPracticeApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(OnlineLearningApplication.class, args);
+		SpringApplication.run(JavaPracticeApplication.class, args);
 	}
 
 }
