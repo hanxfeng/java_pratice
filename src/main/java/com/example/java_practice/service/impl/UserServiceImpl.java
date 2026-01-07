@@ -13,14 +13,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
 
-    // 推荐：构造器注入（最规范）
-    @Autowired
+    // 构造器注入（推荐）
     public UserServiceImpl(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
 
     @Override
-    public List<User> listUsers() {
-        return userMapper.selectList(null);
+    public void register(User user) {
+        // 先留空，下一步我们再写逻辑
     }
 }
