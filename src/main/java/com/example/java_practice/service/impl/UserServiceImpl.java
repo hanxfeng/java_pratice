@@ -1,5 +1,6 @@
 package com.example.java_practice.service.impl;
 
+import java.math.BigDecimal;
 import com.example.java_practice.entity.User;
 import com.example.java_practice.mapper.UserMapper;
 import com.example.java_practice.service.UserService;
@@ -20,6 +21,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void register(User user) {
-        // 先留空，下一步我们再写逻辑
+        // 简单将注册人的身份设置为0，即学生
+        user.setRole("0");
+
+        // 简单将注册人余额设置为0
+        user.setBalance(BigDecimal.ZERO);
+
+        userMapper.insert(user);
     }
 }
