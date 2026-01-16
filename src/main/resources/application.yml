@@ -5,5 +5,5 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://101.200.161.243:3306/online_learning?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
+    username: java_dev
     password: 050316
