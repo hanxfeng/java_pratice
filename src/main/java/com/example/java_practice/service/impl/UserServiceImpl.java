@@ -7,6 +7,7 @@ import com.example.java_practice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
@@ -28,5 +29,11 @@ public class UserServiceImpl implements UserService {
         user.setBalance(BigDecimal.ZERO);
 
         userMapper.insert(user);
+    }
+
+    @Override
+    public List<User> listUsers() {
+        // selectList(null);用于查询全表，因为条件处是null
+        return userMapper.selectList(null);
     }
 }

@@ -3,6 +3,7 @@ package com.example.java_practice.controller;
 import com.example.java_practice.entity.User;
 import com.example.java_practice.service.UserService;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -25,8 +26,14 @@ public class UserController {  //定义类UserController
     //定义一个返回字符串的方法register
     //@RequestBody用于将请求体中的JSON/XML转换为Java对象
     public String register(@RequestBody User user) {
-        //将user给userService中的register进行处理
+        //将 user给userService中的register进行处理
         userService.register(user);
         return "success";
+    }
+
+    @GetMapping("/users")
+    // 定义一个get类型的接口/users
+    public List<User> listUsers() {
+        return userService.listUsers();
     }
 }

@@ -27,7 +27,4 @@ public class User {
     private BigDecimal balance;
     private String createdAt;
 
-    public void setRole(String role) {
-        this.role = role;
-    }
 }
