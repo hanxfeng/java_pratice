@@ -4,6 +4,7 @@ import com.example.java_practice.entity.User;
 
 // 引入 list 集合类型
 import java.util.List;
+
 public interface UserService {
 
     void register(User user);

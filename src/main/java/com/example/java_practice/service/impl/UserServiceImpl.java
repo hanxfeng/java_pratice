@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void register(User user) {
         // 简单将注册人的身份设置为0，即学生
-        user.setRole("0");
+        user.setRole(0);
 
         // 简单将注册人余额设置为0
         user.setBalance(BigDecimal.ZERO);

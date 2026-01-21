@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/users") // 给下面的所有接口添加/users前缀
 public class UserController {  //定义类UserController
     // private - 访问修饰符 限制访问范围，只能在声明它的类内部访问 外部完全不可见：其他类无法直接访问这个变量
     // final - 不可变修饰符  一次性赋值：只能被赋值一次  编译时检查：编译器确保不会二次赋值

@@ -4,6 +4,7 @@ import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /*
 @Data 是 Lombok 的"大礼包"注解，等价于：
@@ -15,6 +16,24 @@ import java.math.BigDecimal;
  */
 
 // 使用@TableName可以明确指定表名，这里指名这个类对应数据库中的users表
+
+/* SQL变量转java变量数据类型转换：
+    SQL                 java                    说明
+    BIGINT      ->      Long                    常用于 id、订单号
+    Int         ->      Integer/int             普通整数
+    TINYINT     ->      Integer/Boolean/int     常用作状态位
+    SMALLINT    ->      Integer/int             小整数
+    DECIMAL(M,N)->      BigDecimal              金额、精度要求高
+    FLOAT       ->      Float                   不精确浮点
+    DOUBLE      ->      Double                  不精确浮点
+    VARCHAR/CHAR/TEXT/LONGTEXT  ->      String  各种字符串
+    DATE        ->      LocalDate               仅日期
+    TIME        ->      LocalTime               仅时间
+    DATETIME    ->      LocalDateTime           日期 + 时间
+    TIMESTAMP   ->      LocalDateTime           时间戳
+
+ */
+
 @Data
 @TableName("users")
 public class User {
@@ -23,7 +42,7 @@ public class User {
     private String password;
     private String email;
     private String phone;
-    private String role;
+    private int role;
     private BigDecimal balance;
     private String createdAt;
 
