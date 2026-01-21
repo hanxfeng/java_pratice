@@ -13,5 +13,6 @@ public interface UserService {
     // <User>是一个泛型，表示这个List中只能放User对象
     List<User> listUsers();
 
+    User getUserById(Long id);
 
 }

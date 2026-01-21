@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @Data
 @TableName("users")
 public class User {
-    private int id;
+    private Long id;
     private String username;
     private String password;
     private String email;

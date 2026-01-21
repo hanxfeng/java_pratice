@@ -31,9 +31,17 @@ public class UserServiceImpl implements UserService {
         userMapper.insert(user);
     }
 
+    // 用于查询所有用户
     @Override
     public List<User> listUsers() {
         // selectList(null);用于查询全表，因为条件处是null
         return userMapper.selectList(null);
+    }
+
+    // 用于查询指定 id的用户
+    // User对象是在entity中定义的，包括里面所含有的所有变量
+    @Override
+    public User getUserById(Long id) {
+        return userMapper.selectById(id);
     }
 }

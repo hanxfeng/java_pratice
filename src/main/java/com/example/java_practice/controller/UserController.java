@@ -31,9 +31,16 @@ public class UserController {  //定义类UserController
         return "success";
     }
 
+    // 定义一个get类型的接口/users,用于查询所有用户
     @GetMapping("/users")
-    // 定义一个get类型的接口/users
     public List<User> listUsers() {
         return userService.listUsers();
+    }
+
+    // 定义一个get类型的接口，用于根据id查询对应用户
+    // @PathVariable Long id 用于将url中{id}部分的id值转为Long类型然后赋值给id
+    @GetMapping("/id/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
     }
 }
