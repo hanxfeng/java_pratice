@@ -1,7 +1,8 @@
 package com.example.java_practice.service;
 
 import com.example.java_practice.entity.User;
-
+import com.example.java_practice.entity.Course;
+import com.example.java_practice.mapper.CourseMapper;
 // 引入 list 集合类型
 import java.util.List;
 
@@ -16,4 +17,5 @@ public interface UserService {
 
     User getUserById(Long id);
 
+    List<Course> getStudentCourse(Long studentId);
 }

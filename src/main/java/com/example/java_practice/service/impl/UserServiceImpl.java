@@ -2,10 +2,12 @@ package com.example.java_practice.service.impl;
 
 import java.math.BigDecimal;
 import com.example.java_practice.entity.User;
+import com.example.java_practice.entity.Course;
 import com.example.java_practice.mapper.UserMapper;
 import com.example.java_practice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.example.java_practice.mapper.CourseMapper;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -14,10 +16,12 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
+    private final CourseMapper courseMapper;
 
     // 构造器注入（推荐）
-    public UserServiceImpl(UserMapper userMapper) {
+    public UserServiceImpl(UserMapper userMapper, CourseMapper courseMapper) {
         this.userMapper = userMapper;
+        this.courseMapper = courseMapper;
     }
 
     @Override
@@ -43,5 +47,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Long id) {
         return userMapper.selectById(id);
+    }
+
+    // 用于根据 id查询其所选课程
+    @Override
+    public List<Course> getStudentCourse(Long id) {
+        User student = userMapper.selectById(id);
+
+        if (student == null) {
+            throw new RuntimeException("该用户不存在，无法查询");
+        }
+
+        if (student.getRole() == 1) {
+            throw new RuntimeException("该用户是老师，无法查询");
+        }
+
+        return courseMapper.selectCoursesByUserId(id);
+
     }
 }

@@ -1,6 +1,8 @@
 package com.example.java_practice.controller;
 
 import com.example.java_practice.entity.User;
+import com.example.java_practice.entity.Course;
+import com.example.java_practice.service.CourseService;
 import com.example.java_practice.service.UserService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -13,12 +15,14 @@ public class UserController {  //定义类UserController
     //UserService 引用的类名
     // userService  定义的变量名
     private final UserService userService;
+    private final CourseService courseService;
 
     // public 该关键字定义的方法任何地方都可以访问
-    public UserController(UserService userService) {
+    public UserController(UserService userService, CourseService courseService) {
         //上文定义的变量userService与参数userService重名，java中重名变量优先使用参数
         //使用this关键字表示这个变量指上面定义的成员变量，否则会出现给参数userService赋值为参数userService的情况
         this.userService = userService;
+        this.courseService = courseService;
     }
 
     //定义一个POST类型的端口/register
@@ -42,5 +46,11 @@ public class UserController {  //定义类UserController
     @GetMapping("/id/{id}")
     public User getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
+    }
+
+    // 定义一个get类型的接口，用于根据学生id查询其选修的课程
+    @GetMapping("/course/{studentId}")
+    public List<Course> getStudentCourse(@PathVariable Long studentId) {
+        return userService.getStudentCourse(studentId);
     }
 }
