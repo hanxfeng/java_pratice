@@ -2,11 +2,11 @@ package com.example.java_practice.controller;
 
 
 import com.example.java_practice.dto.CourseBuyRequest;
+import com.example.java_practice.entity.Orders;
 import com.example.java_practice.service.OrdersService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
@@ -22,5 +22,11 @@ public class OrdersController {
     public String courseBuy (@RequestBody CourseBuyRequest request) {
         ordersService.courseBuy(request.getUserId(), request.getCourseId());
         return "success";
+    }
+
+    // 根据用户 id查询其订单列表
+    @GetMapping("user/{userId}")
+    public List<Orders> selectOrderByUserId (@PathVariable Long userId) {
+        return ordersService.selectOrderByUserId(userId);
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class OrdersServiceImpl implements OrdersService {
@@ -92,6 +93,21 @@ public class OrdersServiceImpl implements OrdersService {
         // 插入 order
         ordersMapper.insert(order);
 
+        // 插入选课表
+        CourseStudent csNew = new CourseStudent();
+        csNew.setUserId(userId);
+        csNew.setCourseId(courseId);
+        csNew.setCreatedAt(LocalDateTime.now());
+        courseStudentMapper.insert(csNew);
+    }
 
+    public List<Orders> selectOrderByUserId (Long userId) {
+        // 检查用户是否存在
+        if (userMapper.selectById(userId) == null) {
+            throw new RuntimeException("用户不存在");
+        }
+
+        // 查询订单并返回
+        return ordersMapper.selectOrdersByUserId(userId);
     }
 }
