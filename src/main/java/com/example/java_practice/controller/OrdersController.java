@@ -25,8 +25,14 @@ public class OrdersController {
     }
 
     // 根据用户 id查询其订单列表
-    @GetMapping("user/{userId}")
+    @GetMapping("/user/{userId}")
     public List<Orders> selectOrderByUserId (@PathVariable Long userId) {
         return ordersService.selectOrderByUserId(userId);
+    }
+
+    // 根据给的orderId 进行退款
+    @PostMapping("/refund")
+    public String refundByOrderId (@RequestBody Long orderId) {
+        return ordersService.refundByOrderId(orderId);
     }
 }

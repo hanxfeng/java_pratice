@@ -11,7 +11,7 @@ import java.util.List;
 public interface OrdersMapper extends BaseMapper<Orders> {
     @Select("""
     select *
-    form orders 
+    from orders 
     where user_id = #{userId}
     """)
     List<Orders> selectOrdersByUserId (@Param("userId") Long userId);
