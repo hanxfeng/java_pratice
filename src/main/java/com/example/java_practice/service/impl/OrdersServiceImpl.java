@@ -13,11 +13,13 @@ import com.example.java_practice.mapper.UserMapper;
 import com.example.java_practice.service.OrdersService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.java_practice.entity.MessageReturn;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class OrdersServiceImpl implements OrdersService {
@@ -35,23 +37,35 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Transactional
     @Override
-    public void courseBuy(Long userId, Long courseId) {
+    public MessageReturn<Object> courseBuy(Long userId, Long courseId) {
         User user = userMapper.selectById(userId);
         Course course = courseMapper.selectById(courseId);
 
         // 判断用户是否存在
         if (user == null) {
-            throw new RuntimeException("该用户不存在，无法购买");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("该用户不存在，无法购买");
+            re.setData(null);
+            return re;
         }
 
         // 判断课程是否存在
         if (course == null) {
-            throw new RuntimeException("课程不存在，无法购买");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("课程不存在，无法购买");
+            re.setData(null);
+            return re;
         }
 
         // 判断是否是学生
         if (user.getRole() == 1) {
-            throw new RuntimeException("该用户不是学生，无法购买");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("该用户不是学生，无法购买");
+            re.setData(null);
+            return re;
         }
 
         // 判断是否购买过该课程
@@ -62,7 +76,11 @@ public class OrdersServiceImpl implements OrdersService {
         CourseStudent cs = courseStudentMapper.selectOne(wrapper);
 
         if (cs != null) {
-            throw new RuntimeException("已购买过该课程，无法购买");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("已购买该课程，无法购买");
+            re.setData(null);
+            return re;
         }
 
         // 判断余额是否足够
@@ -70,7 +88,11 @@ public class OrdersServiceImpl implements OrdersService {
         BigDecimal balance = user.getBalance();
 
         if (price.compareTo(balance) > 0) {
-            throw new RuntimeException("余额不足，无法购买");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("余额不足在，无法购买");
+            re.setData(null);
+            return re;
         }
 
         // 创建 Orders对象
@@ -101,13 +123,23 @@ public class OrdersServiceImpl implements OrdersService {
         csNew.setCourseId(courseId);
         csNew.setCreatedAt(LocalDateTime.now());
         courseStudentMapper.insert(csNew);
+
+        MessageReturn<Object> re = new MessageReturn<>();
+        re.setCode(0);
+        re.setMessage("success");
+        re.setData(null);
+        return re;
     }
 
     @Override
-    public List<Orders> selectOrderByUserId (Long userId) {
+    public MessageReturn<Object> selectOrderByUserId (Long userId) {
         // 检查用户是否存在
         if (userMapper.selectById(userId) == null) {
-            throw new RuntimeException("用户不存在");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("该用户不存在");
+            re.setData(null);
+            return re;
         }
 
         // 查询订单并返回
@@ -115,26 +147,42 @@ public class OrdersServiceImpl implements OrdersService {
         // selectOrdersByUserId 方法即使没有查到数据也不会返回null，因此需要使用isEmpty()判断
         // isEmpty()用于判断集合类型（List，Map等）是否为空，或字符串长度是否为0
         if (ord.isEmpty()) {
-            throw new RuntimeException("该用户无订单");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(0);
+            re.setMessage("success");
+            re.setData(Collections.emptyList());
+            return re;
         }
         else {
-            return ord;
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(0);
+            re.setMessage("success");
+            re.setData(ord);
+            return re;
         }
     }
 
     @Transactional
     @Override
-    public String refundByOrderId (Long orderId) {
+    public MessageReturn<Object> refundByOrderId (Long orderId) {
         // 查询订单
         Orders refundOrder = ordersMapper.selectById(orderId);
 
         if (refundOrder == null) {
-            throw new RuntimeException("请求退款的订单不存在");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("请求退款的订单不存在");
+            re.setData(null);
+            return re;
         }
 
         // 查询订单是否未支付或已退款
         if (refundOrder.getStatus() != 1) {
-            throw new RuntimeException("订单未支付或已退款，无法退款");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("订单未支付或已退款，无法退款");
+            re.setData(null);
+            return re;
         }
 
         // 获取课程 id和用户 id
@@ -143,7 +191,11 @@ public class OrdersServiceImpl implements OrdersService {
 
         // 检查用户是否存在
         if (userMapper.selectById(userId) == null) {
-            throw new RuntimeException("用户不存在，无法退款");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("该用户不存在，无法退款");
+            re.setData(null);
+            return re;
         }
 
 
@@ -154,12 +206,15 @@ public class OrdersServiceImpl implements OrdersService {
                         .eq("user_id", userId)
         );
         if (rows == 0) {
-            throw new RuntimeException("数据不存在，删除失败");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("数据不存在，无法删除");
+            re.setData(null);
+            return re;
         }
 
         // 修改订单状态
         refundOrder.setStatus(2);
-        refundOrder.setPaidAt(LocalDateTime.now());
         ordersMapper.updateById(refundOrder);
 
         // 回滚用户余额
@@ -168,6 +223,10 @@ public class OrdersServiceImpl implements OrdersService {
         user.setBalance(user.getBalance().add(balance));
         userMapper.updateById(user);
 
-        return "success";
+        MessageReturn<Object> re = new MessageReturn<>();
+        re.setCode(0);
+        re.setMessage("success");
+        re.setData(null);
+        return re;
     }
 }

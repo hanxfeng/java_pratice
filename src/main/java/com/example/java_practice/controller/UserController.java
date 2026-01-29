@@ -5,6 +5,7 @@ import com.example.java_practice.entity.Course;
 import com.example.java_practice.service.CourseService;
 import com.example.java_practice.service.UserService;
 import org.springframework.web.bind.annotation.*;
+import com.example.java_practice.entity.MessageReturn;
 import java.util.List;
 
 @RestController
@@ -29,28 +30,27 @@ public class UserController {  //定义类UserController
     @PostMapping("/register")
     //定义一个返回字符串的方法register
     //@RequestBody用于将请求体中的JSON/XML转换为Java对象
-    public String register(@RequestBody User user) {
+    public MessageReturn<Object> register(@RequestBody User user) {
         //将 user给userService中的register进行处理
-        userService.register(user);
-        return "success";
+        return userService.register(user);
     }
 
     // 定义一个get类型的接口/users,用于查询所有用户
     @GetMapping("/users")
-    public List<User> listUsers() {
+    public MessageReturn<Object> listUsers() {
         return userService.listUsers();
     }
 
     // 定义一个get类型的接口，用于根据id查询对应用户
     // @PathVariable Long id 用于将url中{id}部分的id值转为Long类型然后赋值给id
     @GetMapping("/id/{id}")
-    public User getUserById(@PathVariable Long id) {
+    public MessageReturn<Object> getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
     // 定义一个get类型的接口，用于根据学生id查询其选修的课程
     @GetMapping("/course/{studentId}")
-    public List<Course> getStudentCourse(@PathVariable Long studentId) {
+    public MessageReturn<Object> getStudentCourse(@PathVariable Long studentId) {
         return userService.getStudentCourse(studentId);
     }
 }

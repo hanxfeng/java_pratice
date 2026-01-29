@@ -10,7 +10,7 @@ import com.example.java_practice.entity.User;
 import com.example.java_practice.entity.CourseStudent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.example.java_practice.entity.MessageReturn;
 import java.time.LocalDateTime;
 
 @Service
@@ -26,7 +26,7 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public void createCourse(Course course) {
+    public MessageReturn<Object> createCourse(Course course) {
         // 获取 teacherId
         Long teacherId = course.getTeacherId();
 
@@ -34,39 +34,65 @@ public class CourseServiceImpl implements CourseService{
 
         // 判断教师是否存在
         if (teacher == null) {
-            throw new RuntimeException("教师不存在，无法创建课程");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("教师不存在，无法创建课程");
+            re.setData(null);
+            return re;
         }
 
         // 判断用户是不是老师
         if (teacher.getRole() != 1) {
-            throw new RuntimeException("该用户不是老师，不能创建课程");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("该用户不是老师，无法创建课程");
+            re.setData(null);
+            return re;
         }
 
         // 设置默认值
         course.setStudentCount(0);
-        course.setLikes(1L);
+        course.setLikes(0L);
 
         // 插入
         courseMapper.insert(course);
+
+        MessageReturn<Object> re = new MessageReturn<>();
+        re.setCode(0);
+        re.setMessage("success");
+        re.setData(null);
+        return re;
     }
 
     @Transactional  // 带有这个注解代表里面的 SQL要么一起成功要么一起失败
     @Override
-    public void studentCourseSelect(Long userId,Long courseId) {
+    public MessageReturn<Object> studentCourseSelect(Long userId,Long courseId) {
 
         // 判断用户是否存在
         if (userMapper.selectById(userId) == null) {
-            throw new RuntimeException("用户不存在，无法选课");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("用户不存在，无法选课");
+            re.setData(null);
+            return re;
         }
 
         // 判断课程是否存在
         if (courseMapper.selectById(courseId) == null) {
-            throw new RuntimeException("课程不存在，无法选课");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("课程不存在，无法选课");
+            re.setData(null);
+            return re;
         }
 
         // 判断用户是否是学生
-        if (userId == 1) {
-            throw new RuntimeException("用户为教师，无法选课");
+        if (userMapper.selectById(userId).getRole() == 1) {
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("用户为教师，无法选课");
+            re.setData(null);
+            return re;
         }
 
         // 判断是否重复进行选课
@@ -77,7 +103,11 @@ public class CourseServiceImpl implements CourseService{
         CourseStudent cs = courseStudentMapper.selectOne(wrapper);
 
         if (cs != null) {
-            throw new RuntimeException("已选过该课程，无法选课");
+            MessageReturn<Object> re = new MessageReturn<>();
+            re.setCode(1);
+            re.setMessage("已选过该课程，无法选课");
+            re.setData(null);
+            return re;
         }
 
         // 获取当前时间准备插入
@@ -95,5 +125,10 @@ public class CourseServiceImpl implements CourseService{
         c.setStudentCount(c.getStudentCount() + 1);
         courseMapper.updateById(c);
 
+        MessageReturn<Object> re = new MessageReturn<>();
+        re.setCode(0);
+        re.setMessage("success");
+        re.setData(null);
+        return re;
     }
 }
