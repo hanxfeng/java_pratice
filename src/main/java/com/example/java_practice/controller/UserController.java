@@ -32,25 +32,29 @@ public class UserController {  //定义类UserController
     //@RequestBody用于将请求体中的JSON/XML转换为Java对象
     public MessageReturn<Object> register(@RequestBody User user) {
         //将 user给userService中的register进行处理
-        return userService.register(user);
+        userService.register(user);
+        return MessageReturn.success();
     }
 
     // 定义一个get类型的接口/users,用于查询所有用户
     @GetMapping("/users")
     public MessageReturn<Object> listUsers() {
-        return userService.listUsers();
+        List<User> u = userService.listUsers();
+        return MessageReturn.success(u);
     }
 
     // 定义一个get类型的接口，用于根据id查询对应用户
     // @PathVariable Long id 用于将url中{id}部分的id值转为Long类型然后赋值给id
     @GetMapping("/id/{id}")
     public MessageReturn<Object> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+        User u = userService.getUserById(id);
+        return MessageReturn.success(u);
     }
 
     // 定义一个get类型的接口，用于根据学生id查询其选修的课程
     @GetMapping("/course/{studentId}")
     public MessageReturn<Object> getStudentCourse(@PathVariable Long studentId) {
-        return userService.getStudentCourse(studentId);
+        List<Course> u = userService.getStudentCourse(studentId);
+        return MessageReturn.success(u);
     }
 }

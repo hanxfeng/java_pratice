@@ -19,15 +19,17 @@ public class CourseController {
     // 用于教师创建课程
     @PostMapping("/creatCourse")
     public MessageReturn<Object> creatCourse (@RequestBody Course course) {
-        return courseService.createCourse(course);
+        courseService.createCourse(course);
+        return MessageReturn.success();
     }
 
     // 用于学生进行选课
     @PostMapping("/select")
     public MessageReturn<Object> studentCourseSelect (@RequestBody studentCourseSelectRequest request) {
-        return courseService.studentCourseSelect(
+        courseService.studentCourseSelect(
                 request.getUserId(),
                 request.getCourseId()
         );
+        return MessageReturn.success();
     }
 }

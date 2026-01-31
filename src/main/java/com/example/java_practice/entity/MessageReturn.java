@@ -10,13 +10,28 @@ public class MessageReturn<T> {
     private String message;
     private T data;
 
-    public MessageReturn() {
+    public static <T> MessageReturn<T> success() {
+        MessageReturn<T> r = new MessageReturn<>();
+        r.setCode(0);
+        r.setMessage("success");
+        r.setData(null);
+        return r;
     }
 
-    public MessageReturn(int code, String message, T data) {
-        this.code = code;
-        this.data = data;
-        this.message = message;
+    public static <T> MessageReturn<T> success(T data) {
+        MessageReturn<T> r = new MessageReturn<>();
+        r.setCode(0);
+        r.setMessage("success");
+        r.setData(data);
+        return r;
+    }
+
+    public static <T> MessageReturn<T> error(String message) {
+        MessageReturn<T> r = new MessageReturn<>();
+        r.setCode(1);
+        r.setMessage(message);
+        r.setData(null);
+        return r;
     }
 
 }

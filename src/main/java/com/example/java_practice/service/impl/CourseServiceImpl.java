@@ -1,6 +1,7 @@
 package com.example.java_practice.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.java_practice.exception.BizException;
 import com.example.java_practice.mapper.CourseMapper;
 import com.example.java_practice.mapper.CourseStudentMapper;
 import com.example.java_practice.mapper.UserMapper;
@@ -26,7 +27,7 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public MessageReturn<Object> createCourse(Course course) {
+    public void createCourse(Course course) {
         // 获取 teacherId
         Long teacherId = course.getTeacherId();
 
@@ -34,20 +35,12 @@ public class CourseServiceImpl implements CourseService{
 
         // 判断教师是否存在
         if (teacher == null) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("教师不存在，无法创建课程");
-            re.setData(null);
-            return re;
+            throw new BizException("教师不存在，无法创建课程");
         }
 
         // 判断用户是不是老师
         if (teacher.getRole() != 1) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("该用户不是老师，无法创建课程");
-            re.setData(null);
-            return re;
+            throw new BizException("该用户不是老师，无法创建课程");
         }
 
         // 设置默认值
@@ -56,43 +49,25 @@ public class CourseServiceImpl implements CourseService{
 
         // 插入
         courseMapper.insert(course);
-
-        MessageReturn<Object> re = new MessageReturn<>();
-        re.setCode(0);
-        re.setMessage("success");
-        re.setData(null);
-        return re;
     }
 
     @Transactional  // 带有这个注解代表里面的 SQL要么一起成功要么一起失败
     @Override
-    public MessageReturn<Object> studentCourseSelect(Long userId,Long courseId) {
+    public void studentCourseSelect(Long userId,Long courseId) {
 
         // 判断用户是否存在
         if (userMapper.selectById(userId) == null) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("用户不存在，无法选课");
-            re.setData(null);
-            return re;
+            throw new BizException("用户不存在，无法选课");
         }
 
         // 判断课程是否存在
         if (courseMapper.selectById(courseId) == null) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("课程不存在，无法选课");
-            re.setData(null);
-            return re;
+            throw new BizException("课程不存在，无法选课");
         }
 
         // 判断用户是否是学生
         if (userMapper.selectById(userId).getRole() == 1) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("用户为教师，无法选课");
-            re.setData(null);
-            return re;
+            throw new BizException("用户为教师，无法选课");
         }
 
         // 判断是否重复进行选课
@@ -103,11 +78,7 @@ public class CourseServiceImpl implements CourseService{
         CourseStudent cs = courseStudentMapper.selectOne(wrapper);
 
         if (cs != null) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("已选过该课程，无法选课");
-            re.setData(null);
-            return re;
+            throw new BizException("已选过该课程，无法选课");
         }
 
         // 获取当前时间准备插入
@@ -124,11 +95,5 @@ public class CourseServiceImpl implements CourseService{
         Course c = courseMapper.selectById(courseId);
         c.setStudentCount(c.getStudentCount() + 1);
         courseMapper.updateById(c);
-
-        MessageReturn<Object> re = new MessageReturn<>();
-        re.setCode(0);
-        re.setMessage("success");
-        re.setData(null);
-        return re;
     }
 }

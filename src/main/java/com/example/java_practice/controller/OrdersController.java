@@ -21,18 +21,21 @@ public class OrdersController {
     // 用于进行课程购买
     @PostMapping("/buy")
     public MessageReturn<Object> courseBuy (@RequestBody CourseBuyRequest request) {
-        return ordersService.courseBuy(request.getUserId(), request.getCourseId());
+        ordersService.courseBuy(request.getUserId(), request.getCourseId());
+        return MessageReturn.success();
     }
 
     // 根据用户 id查询其订单列表
     @GetMapping("/user/{userId}")
     public MessageReturn<Object> selectOrderByUserId (@PathVariable Long userId) {
-        return ordersService.selectOrderByUserId(userId);
+        List<Orders> ord = ordersService.selectOrderByUserId(userId);
+        return MessageReturn.success(ord);
     }
 
     // 根据给的orderId 进行退款
     @PostMapping("/refund")
     public MessageReturn<Object> refundByOrderId (@RequestBody Long orderId) {
-        return ordersService.refundByOrderId(orderId);
+        ordersService.refundByOrderId(orderId);
+        return MessageReturn.success();
     }
 }

@@ -6,6 +6,7 @@ import com.example.java_practice.entity.Course;
 import com.example.java_practice.entity.CourseStudent;
 import com.example.java_practice.entity.Orders;
 import com.example.java_practice.entity.User;
+import com.example.java_practice.exception.BizException;
 import com.example.java_practice.mapper.CourseMapper;
 import com.example.java_practice.mapper.CourseStudentMapper;
 import com.example.java_practice.mapper.OrdersMapper;
@@ -37,35 +38,23 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Transactional
     @Override
-    public MessageReturn<Object> courseBuy(Long userId, Long courseId) {
+    public void courseBuy(Long userId, Long courseId) {
         User user = userMapper.selectById(userId);
         Course course = courseMapper.selectById(courseId);
 
         // 判断用户是否存在
         if (user == null) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("该用户不存在，无法购买");
-            re.setData(null);
-            return re;
+            throw new BizException("该用户不存在，无法购买");
         }
 
         // 判断课程是否存在
         if (course == null) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("课程不存在，无法购买");
-            re.setData(null);
-            return re;
+            throw new BizException("课程不存在，无法购买");
         }
 
         // 判断是否是学生
         if (user.getRole() == 1) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("该用户不是学生，无法购买");
-            re.setData(null);
-            return re;
+            throw new BizException("该用户不是学生，无法购买");
         }
 
         // 判断是否购买过该课程
@@ -76,11 +65,7 @@ public class OrdersServiceImpl implements OrdersService {
         CourseStudent cs = courseStudentMapper.selectOne(wrapper);
 
         if (cs != null) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("已购买该课程，无法购买");
-            re.setData(null);
-            return re;
+            throw new BizException("已购买该课程，无法购买");
         }
 
         // 判断余额是否足够
@@ -88,11 +73,7 @@ public class OrdersServiceImpl implements OrdersService {
         BigDecimal balance = user.getBalance();
 
         if (price.compareTo(balance) > 0) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("余额不足在，无法购买");
-            re.setData(null);
-            return re;
+            throw new BizException("余额不足在，无法购买");
         }
 
         // 创建 Orders对象
@@ -123,23 +104,13 @@ public class OrdersServiceImpl implements OrdersService {
         csNew.setCourseId(courseId);
         csNew.setCreatedAt(LocalDateTime.now());
         courseStudentMapper.insert(csNew);
-
-        MessageReturn<Object> re = new MessageReturn<>();
-        re.setCode(0);
-        re.setMessage("success");
-        re.setData(null);
-        return re;
     }
 
     @Override
-    public MessageReturn<Object> selectOrderByUserId (Long userId) {
+    public List<Orders> selectOrderByUserId (Long userId) {
         // 检查用户是否存在
         if (userMapper.selectById(userId) == null) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("该用户不存在");
-            re.setData(null);
-            return re;
+            throw new BizException("该用户不存在");
         }
 
         // 查询订单并返回
@@ -147,42 +118,26 @@ public class OrdersServiceImpl implements OrdersService {
         // selectOrdersByUserId 方法即使没有查到数据也不会返回null，因此需要使用isEmpty()判断
         // isEmpty()用于判断集合类型（List，Map等）是否为空，或字符串长度是否为0
         if (ord.isEmpty()) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(0);
-            re.setMessage("success");
-            re.setData(Collections.emptyList());
-            return re;
+            return Collections.emptyList();
         }
         else {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(0);
-            re.setMessage("success");
-            re.setData(ord);
-            return re;
+            return ord;
         }
     }
 
     @Transactional
     @Override
-    public MessageReturn<Object> refundByOrderId (Long orderId) {
+    public void refundByOrderId (Long orderId) {
         // 查询订单
         Orders refundOrder = ordersMapper.selectById(orderId);
 
         if (refundOrder == null) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("请求退款的订单不存在");
-            re.setData(null);
-            return re;
+            throw new BizException("请求退款的订单不存在");
         }
 
         // 查询订单是否未支付或已退款
         if (refundOrder.getStatus() != 1) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("订单未支付或已退款，无法退款");
-            re.setData(null);
-            return re;
+            throw new BizException("订单未支付或已退款，无法退款");
         }
 
         // 获取课程 id和用户 id
@@ -191,11 +146,7 @@ public class OrdersServiceImpl implements OrdersService {
 
         // 检查用户是否存在
         if (userMapper.selectById(userId) == null) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("该用户不存在，无法退款");
-            re.setData(null);
-            return re;
+            throw new BizException("该用户不存在，无法退款");
         }
 
 
@@ -206,11 +157,7 @@ public class OrdersServiceImpl implements OrdersService {
                         .eq("user_id", userId)
         );
         if (rows == 0) {
-            MessageReturn<Object> re = new MessageReturn<>();
-            re.setCode(1);
-            re.setMessage("数据不存在，无法删除");
-            re.setData(null);
-            return re;
+            throw new BizException("数据不存在，无法删除");
         }
 
         // 修改订单状态
@@ -222,11 +169,5 @@ public class OrdersServiceImpl implements OrdersService {
         BigDecimal balance = refundOrder.getAmount();
         user.setBalance(user.getBalance().add(balance));
         userMapper.updateById(user);
-
-        MessageReturn<Object> re = new MessageReturn<>();
-        re.setCode(0);
-        re.setMessage("success");
-        re.setData(null);
-        return re;
     }
 }
